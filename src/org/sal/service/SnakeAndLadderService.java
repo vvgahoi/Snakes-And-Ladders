@@ -105,7 +105,7 @@ public class SnakeAndLadderService {
 	private int getTotalValueAfterDiceRolls() {
 		List<Integer> list = new ArrayList<>();
 		if (this.shouldAllowMultipleDiceRollOnSix) {
-			IntStream.range(1, noOfDices).forEachOrdered(n -> list.add(DiceService.roll()));
+			IntStream.range(0, noOfDices).forEachOrdered(n -> list.add(DiceService.roll()));
 			if (MS.equals(SUM)) {
 				return list.stream().reduce(0, Integer::sum);
 			} else if (MS.equals(MAX)) {
