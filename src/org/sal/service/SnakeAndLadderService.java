@@ -87,6 +87,15 @@ public class SnakeAndLadderService {
 		} while (newPosition != previousPosition);
 		return newPosition;
 	}
+	
+	private void resetPlayer(String playerId, int position) {
+		Map<String, Integer> playerPieces = snakeAndLadderBoard.getPlayerPieces();
+		playerPieces.forEach((id, pos) -> {
+			if (id != playerId && pos == position) {
+				playerPieces.put(id, 1);
+			}
+		});
+	}
 
 	private void movePlayer(Player player, int positions) {
 		int oldPosition = snakeAndLadderBoard.getPlayerPieces().get(player.getId());
@@ -97,6 +106,7 @@ public class SnakeAndLadderService {
 		} else {
 			newPosition = getNewPositionAfterGoingThroughSnakesAndLadders(newPosition);
 		}
+		resetPlayer(player.getId(), newPosition);
 		snakeAndLadderBoard.getPlayerPieces().put(player.getId(), newPosition);
 		System.out.println(
 				player.getName() + " rolled a " + positions + " and moved from " + oldPosition + " to " + newPosition);
