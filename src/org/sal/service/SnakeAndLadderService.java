@@ -22,12 +22,15 @@ public class SnakeAndLadderService {
 	private int noOfDices;
 	private boolean shouldAllowMultipleDiceRollOnSix;
 
+	private Map<Integer, Integer> snakes = new HashMap<>();
+	private Map<Integer, Integer> ladders = new HashMap<>();
+
 	private static final int DEFAULT_BOARD_SIZE = 100;
 	private static final int DEFAULT_NO_OF_DICES = 1;
 	private static final String MAX = "MAX";
 	private static final String MIN = "MIN";
 	private static final String SUM = "SUM";
-	private static final String MS = MIN; // Movement Strategy e.g. SUM/MAX/MIN
+	private static final String MS = MAX; // Movement Strategy e.g. SUM/MAX/MIN
 
 	public SnakeAndLadderService(int boardSize) {
 		this.snakeAndLadderBoard = new SnakeAndLadderBoard(boardSize);
@@ -39,6 +42,22 @@ public class SnakeAndLadderService {
 
 	public SnakeAndLadderService() {
 		this(SnakeAndLadderService.DEFAULT_BOARD_SIZE);
+	}
+
+	public Map<Integer, Integer> getSnakes() {
+		return snakes;
+	}
+
+	public void setSnakes(Map<Integer, Integer> snakes) {
+		this.snakes = snakes;
+	}
+
+	public Map<Integer, Integer> getLadders() {
+		return ladders;
+	}
+
+	public void setLadders(Map<Integer, Integer> ladders) {
+		this.ladders = ladders;
 	}
 
 	public void setNoOfDices(int noOfDices) {
@@ -73,21 +92,18 @@ public class SnakeAndLadderService {
 
 		do {
 			previousPosition = newPosition;
-			for (Snake snake : snakeAndLadderBoard.getSnakes()) {
-				if (snake.getStart() == newPosition) {
-					newPosition = snake.getEnd();
+			if (snakes.get(newPosition) != null) {
+				if (snakes.get(newPosition) < newPosition) {
+					newPosition = snakes.get(newPosition);
 				}
 			}
-
-			for (Ladder ladder : snakeAndLadderBoard.getLadders()) {
-				if (ladder.getStart() == newPosition) {
-					newPosition = ladder.getEnd();
-				}
+			if (ladders.get(newPosition) != null) {
+				newPosition = ladders.get(newPosition);
 			}
 		} while (newPosition != previousPosition);
 		return newPosition;
 	}
-	
+
 	private void resetPlayer(String playerId, int position) {
 		Map<String, Integer> playerPieces = snakeAndLadderBoard.getPlayerPieces();
 		playerPieces.forEach((id, pos) -> {
@@ -115,7 +131,11 @@ public class SnakeAndLadderService {
 	private int getTotalValueAfterDiceRolls() {
 		List<Integer> list = new ArrayList<>();
 		if (this.shouldAllowMultipleDiceRollOnSix) {
-			IntStream.range(0, noOfDices).forEachOrdered(n -> list.add(DiceService.roll()));
+			for (int i = 1; i < noOfDices; i++) {
+				list.add(DiceService.roll());
+				
+			}
+			//IntStream.range(1, noOfDices).forEachOrdered(n -> list.add(DiceService.roll()));
 			if (MS.equals(SUM)) {
 				return list.stream().reduce(0, Integer::sum);
 			} else if (MS.equals(MAX)) {
