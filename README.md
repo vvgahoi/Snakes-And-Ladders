@@ -1,4 +1,3 @@
-# Snakes-And-Ladders
 Snakes & Ladders
 Problem Statement
 You have to design & implement a Snakes and Ladders game that supports the following
